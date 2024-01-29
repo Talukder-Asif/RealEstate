@@ -5,6 +5,7 @@ import "./index.css";
 import MainLayout from "./Layout/MainLayout";
 import HomeLayout from "./Pages/HomePage/HomeLayout";
 import AuthProvider from "./AuthProvider/AuthProvider";
+import SignIn from "./Pages/SignIn/SignIn";
 
 const router = createBrowserRouter([
   {
@@ -15,6 +16,10 @@ const router = createBrowserRouter([
         path: "/",
         element: <HomeLayout></HomeLayout>,
       },
+      {
+        path:"/signin",
+        element:<SignIn></SignIn>
+      }
     ],
   },
 ]);
