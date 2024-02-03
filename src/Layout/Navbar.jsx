@@ -2,11 +2,11 @@ import { NavLink } from "react-router-dom";
 import "./NavStyle.css"
 const Navbar = () => {
     const option = <>
-        <li> <NavLink className="pb-4 text-base text-white hover:border-b-4 border-[#15c39a] rounded-[0px] mx-1 px-1" to={"/"}>Home</NavLink> </li>
-        <li> <NavLink className="pb-4 text-base text-white hover:border-b-4 border-[#15c39a] rounded-[0px] mx-1 px-1" to={"/about"}>About</NavLink> </li>
+        <li> <NavLink className="py-2 text-base text-white border-b-4 hover:border-[#15c39a] border-transparent rounded-[0px] mx-1 px-1" to={"/"}>Home</NavLink> </li>
+        <li> <NavLink className="py-2 text-base text-white border-b-4 hover:border-[#15c39a] border-transparent rounded-[0px] mx-1 px-1" to={"/about"}>About</NavLink> </li>
     </>
   return (
-    <div className="bg-[#0e2e50]">
+    <div className="bg-[#0e2e50] px-5">
       <div className="navbar bg-transparent">
         <div className="navbar-start">
           <div className="dropdown">
@@ -41,7 +41,7 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="navbar-end">
-          <a href="/signin" className="btn">Button</a>
+          <a className="text-white font-semibold underline text-lg" href="/signin" >Sing in</a>
         </div>
       </div>
     </div>
