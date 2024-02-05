@@ -1,6 +1,27 @@
+import { useForm } from "react-hook-form";
 import Btn from "../../Component/Btn";
 
 const SignUp = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  // const handelSubmit = (e)=>{
+  //     e.preventDefault();
+  //     const form = e.target;
+  //     const name = form.name.value;
+  //     const email = form.email.value;
+  //     const phone = form.phone.value;
+  //     const address = form.address.value;
+  //     const password = form.password.value;
+  //     const image = form.image.value;
+  //     console.log(name, phone, address, password, image, email);
+  // }
+  const handelSignup = (data) => {
+    console.log(data);
+  };
+
   return (
     <div className="bg-[#eaf7f4] min-h-[70vh] py-12">
       <div className="max-w-[800px] mx-auto my-[10%] p-6 bg-white -md sm:px-8 sm:py-10 lg:px-12 lg:py-16">
@@ -8,33 +29,93 @@ const SignUp = () => {
           <div className="w-full mb-8 sm:mb-0">
             {/* Left side form */}
             <h2 className="text-2xl font-bold mb-5">Sign Up Now</h2>
-            <form>
+            <form onSubmit={handleSubmit(handelSignup)}>
               <div className="flex flex-col space-y-2 mb-2">
                 <div className="grid grid-cols-2 gap-5 ">
-                  <input
-                    className="h-12 border-b-2 border-gray-300 px-4 text-lg focus:outline-none focus:border-[#15c39a]"
-                    placeholder="Your Name"
-                    type="text"
-                    name="name"
-                  />
-                  <input
-                    className="h-12 border-b-2 border-gray-300 px-4 text-lg focus:outline-none focus:border-[#15c39a]"
-                    placeholder="Your Email"
-                    type="email"
-                    name="email"
-                  />
-                  <input
-                    className="h-12 border-b-2 border-gray-300 px-4 text-lg focus:outline-none focus:border-[#15c39a]"
-                    placeholder="Phone Number"
-                    type="tel"
-                    name="phone"
-                  />
-                  <input
-                    className="h-12 border-b-2 border-gray-300 px-4 text-lg focus:outline-none focus:border-[#15c39a]"
-                    placeholder="Present Address"
-                    type="text"
-                    name="address"
-                  />
+                  <div>
+                    <input
+                      className={
+                        errors.name
+                          ? "h-12 border-b-2 border-red-500 px-4 w-full text-lg focus:outline-none focus:border-[#15c39a]"
+                          : "h-12 border-b-2 border-gray-300 w-full px-4 text-lg focus:outline-none focus:border-[#15c39a]"
+                      }
+                      placeholder="Your Name"
+                      type="text"
+                      {...register("name", { required: "Enter Your Name" })}
+                    />
+                    <p className="text-red-500">{errors.name?.message} </p>
+                  </div>
+
+                  <div>
+                    <input
+                      className={
+                        errors.email
+                          ? "h-12 border-b-2 border-red-500 px-4 text-lg w-full focus:outline-none focus:border-[#15c39a]"
+                          : "h-12 border-b-2 border-gray-300 w-full px-4 text-lg focus:outline-none focus:border-[#15c39a]"
+                      }
+                      placeholder="Your Email"
+                      type="email"
+                      {...register("email", {
+                        required: "Enter your email address",
+                      })}
+                    />
+                    <p className="text-red-500">{errors.email?.message} </p>
+                  </div>
+
+                  <div>
+                    <input
+                      className={
+                        errors.phone
+                          ? "h-12 border-b-2 border-red-500 px-4 w-full text-lg focus:outline-none focus:border-[#15c39a]"
+                          : "h-12 border-b-2 w-full border-gray-300 px-4 text-lg focus:outline-none focus:border-[#15c39a]"
+                      }
+                      placeholder="Phone Number"
+                      type="tel"
+                      {...register("phone", {
+                        required: "Enter your phone number",
+                      })}
+                    />
+                    <p className="text-red-500">{errors.phone?.message} </p>
+                  </div>
+
+                  <div>
+                    <input
+                      className={
+                        errors.address
+                          ? "h-12 border-b-2 border-red-500 w-full px-4 text-lg focus:outline-none focus:border-[#15c39a]"
+                          : "h-12 border-b-2 border-gray-300 w-full px-4 text-lg focus:outline-none focus:border-[#15c39a]"
+                      }
+                      placeholder="Present Address"
+                      type="text"
+                      {...register("address", {
+                        required: "Enter your address",
+                      })}
+                    />
+                    <p className="text-red-500">{errors.address?.message} </p>
+                  </div>
+
+                  {/* <input
+                      type="file"
+                      name="image" 
+                      className="file-input file-input-bordered file-input-accent  w-full"
+
+                    /> */}
+                  <div>
+                    <input
+                      className={
+                        errors.password
+                          ? "h-12 border-b-2 border-red-500 w-full px-4 text-lg focus:outline-none focus:border-[#15c39a]"
+                          : "h-12 border-b-2 border-gray-300 w-full px-4 text-lg focus:outline-none focus:border-[#15c39a]"
+                      }
+                      placeholder="Password"
+                      type="password"
+                      {...register("password", {
+                        // eslint-disable-next-line no-useless-escape
+                        required: "Enter a password", pattern: {value: /^(?=.*[A-Z])(?=.*[\W_]).+$/, message:"Must contain at least one capital letter and one special character."}, minLength:{value:6, message:"Must contain at least 6 digit"}
+                      })}
+                    />
+                    <p className="text-red-500">{errors.password?.message} </p>
+                  </div>
                 </div>
               </div>
 
@@ -59,9 +140,11 @@ const SignUp = () => {
                 </svg>
                 SIGN UP WITH GOOGLE
               </button>
-              <a href="/signin"><button  className=" border-2 border-[#15c39a] hover:text-white hover:bg-[#15c39a] bg-white text-[#15c39a] font-medium rounded-lg text-base px-5 py-2.5 w-full">
-              HAVE AN ACCOUNT
-            </button></a>
+              <a href="/signin">
+                <button className=" border-2 border-[#15c39a] hover:text-white hover:bg-[#15c39a] bg-white text-[#15c39a] font-medium rounded-lg text-base px-5 py-2.5 w-full">
+                  HAVE AN ACCOUNT
+                </button>
+              </a>
             </div>
           </div>
         </div>
