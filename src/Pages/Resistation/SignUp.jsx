@@ -1,25 +1,22 @@
 import { useForm } from "react-hook-form";
 import Btn from "../../Component/Btn";
+import axios from "axios";
 
 const SignUp = () => {
+  const imgbbKey = "741f857d3f007eab00beef241dce3448";
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  // const handelSubmit = (e)=>{
-  //     e.preventDefault();
-  //     const form = e.target;
-  //     const name = form.name.value;
-  //     const email = form.email.value;
-  //     const phone = form.phone.value;
-  //     const address = form.address.value;
-  //     const password = form.password.value;
-  //     const image = form.image.value;
-  //     console.log(name, phone, address, password, image, email);
-  // }
-  const handelSignup = (data) => {
-    console.log(data);
+
+  const handelSignup = async (data) => {
+    const res = await axios.post(`https://api.imgbb.com/1/upload?expiration=600&key=${imgbbKey}`, {image: data.image[0]},{
+      headers:{
+        "Content-Type":'multipart/form-data'
+      }
+    } )
+    console.log(res.data)
   };
 
   return (
@@ -94,12 +91,15 @@ const SignUp = () => {
                     <p className="text-red-500">{errors.address?.message} </p>
                   </div>
 
-                  {/* <input
-                      type="file"
-                      name="image" 
-                      className="file-input file-input-bordered file-input-accent  w-full"
 
-                    /> */}
+                  <input
+                      type="file"
+                      {...register("image")}
+                      className="file-input file:border-[#15c39a] file:bg-[#15c39a] border-[#15c39a] file:text-white w-full"
+                      required
+                    />
+
+
                   <div>
                     <input
                       className={
