@@ -1,16 +1,25 @@
 import { NavLink } from "react-router-dom";
 import "./NavStyle.css"
+import { useContext } from "react";
+import { AuthContext } from "../AuthProvider/AuthProvider";
 const Navbar = () => {
+  const {user, loading} = useContext(AuthContext);
+  console.log(user, loading)
+
+
     const option = <>
         <li> <NavLink className="py-2 text-base text-white border-b-4 hover:border-[#15c39a] border-transparent rounded-[0px] mx-1 px-1" to={"/"}>Home</NavLink> </li>
         <li> <NavLink className="py-2 text-base text-white border-b-4 hover:border-[#15c39a] border-transparent rounded-[0px] mx-1 px-1" to={"/about"}>About</NavLink> </li>
     </>
+  if(loading){
+    return <div className="skeleton rounded-none bg-[#0e2e50] w-full h-16"></div>
+  }
   return (
-    <div className="bg-[#0e2e50] px-5">
-      <div className="navbar bg-transparent">
+    <div className="bg-[#0e2e50] ">
+      <div className="navbar max-w-7xl m-auto bg-transparent">
         <div className="navbar-start">
           <div className="dropdown">
-            <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
+            <div tabIndex={0} role="button" className="btn btn-ghost text-white lg:hidden">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5"
@@ -28,7 +37,7 @@ const Navbar = () => {
             </div>
             <ul
               tabIndex={0}
-              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100 rounded-box w-52"
+              className="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-[#0e2e50] rounded-box w-52"
             >
               {option}
             </ul>
@@ -41,7 +50,8 @@ const Navbar = () => {
           </ul>
         </div>
         <div className="navbar-end">
-          <a className="text-white font-semibold underline text-lg" href="/signin" >Sing in</a>
+          <img className="w-10 h-10 rounded-full" src={user?.photoURL} alt="" />
+          <a className="text-white font-semibold underline mr-2 text-lg" href="/signin" >Sing in</a>
         </div>
       </div>
     </div>

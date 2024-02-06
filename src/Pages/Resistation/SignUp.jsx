@@ -1,15 +1,22 @@
 import { useForm } from "react-hook-form";
 import Btn from "../../Component/Btn";
 import axios from "axios";
+import { useContext } from "react";
+import { AuthContext } from "../../AuthProvider/AuthProvider";
+import { GoogleAuthProvider } from "firebase/auth";
 
 const SignUp = () => {
   const imgbbKey = "741f857d3f007eab00beef241dce3448";
+  const { createUser, googleSignup, update } = useContext(AuthContext);
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
 
+
+
+  // Sign up using email and password
   const handelSignup = async (data) => {
     const res = await axios.post(`https://api.imgbb.com/1/upload?expiration=600&key=${imgbbKey}`, {image: data.image[0]},{
       headers:{
@@ -17,7 +24,60 @@ const SignUp = () => {
       }
     } )
     console.log(res.data)
+
+    const name = data.name;
+    const email = data.email;
+    const password = data.password;
+    const image = res?.data?.data?.url;
+    const phone = data.phone;
+    console.log(name, email, phone, password, image)
+
+    return createUser(email, password)
+    .then((userCredential) => {
+      const user = userCredential.user;
+      console.log(user)
+      update(name, image);
+    })
+    .catch((error) => {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode, errorMessage)
+      // ..
+    });
   };
+
+  // Signup using google
+  const handleGoogle = () =>{
+    return googleSignup()
+    .then((result) => {
+      // This gives you a Google Access Token. You can use it to access the Google API.
+      const credential = GoogleAuthProvider.credentialFromResult(result);
+      const token = credential.accessToken;
+      // The signed-in user info.
+      const user = result.user;
+      // IdP data available using getAdditionalUserInfo(result)
+      // ...
+      console.log(token, user)
+    }).catch((error) => {
+      // Handle Errors here.
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      // The email of the user's account used.
+      const email = error.customData.email;
+      // The AuthCredential type that was used.
+      const credential = GoogleAuthProvider.credentialFromError(error);
+      // ...
+
+
+      console.log(errorCode, errorMessage, email, credential);
+    });
+  }
+
+
+
+
+
+
 
   return (
     <div className="bg-[#eaf7f4] min-h-[70vh] py-12">
@@ -53,7 +113,7 @@ const SignUp = () => {
                       placeholder="Your Email"
                       type="email"
                       {...register("email", {
-                        required: "Enter your email address",
+                        required: "Enter your email address"
                       })}
                     />
                     <p className="text-red-500">{errors.email?.message} </p>
@@ -124,7 +184,7 @@ const SignUp = () => {
             </form>
             <p className="text-sm my-4 flex justify-center">Or</p>
             <div className="grid grid-cols-2 gap-2">
-              <button className="inline-flex items-center justify-center rounded-md text-sm font-bold  h-12 px-4 py-2 w-full mb-2 border-2 border-blue-600 hover:text-white hover:bg-blue-600 bg-white text-blue-600 ">
+              <button onClick={handleGoogle} className="inline-flex items-center justify-center rounded-md text-sm font-bold  h-12 px-4 py-2 w-full mb-2 border-2 border-blue-600 hover:text-white hover:bg-blue-600 bg-white text-blue-600 ">
                 <svg
                   className="w-6 h-6 me-2"
                   aria-hidden="true"
@@ -141,7 +201,7 @@ const SignUp = () => {
                 SIGN UP WITH GOOGLE
               </button>
               <a href="/signin">
-                <button className=" border-2 border-[#15c39a] hover:text-white hover:bg-[#15c39a] bg-white text-[#15c39a] font-medium rounded-lg text-base px-5 py-2.5 w-full">
+                <button className=" border-2 border-[#0e2e50] hover:text-white hover:bg-[#0e2e50] bg-white text-[#0e2e50] font-medium rounded-lg text-base px-5 py-2.5 w-full">
                   HAVE AN ACCOUNT
                 </button>
               </a>

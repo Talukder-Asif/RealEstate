@@ -1,5 +1,4 @@
 import { createContext, useEffect, useState } from "react";
-import { auth } from "../firebase.config";
 import {
   GoogleAuthProvider,
   createUserWithEmailAndPassword,
@@ -9,6 +8,7 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
+import { auth } from "../firebase.config";
 
 export const AuthContext = createContext(null);
 // eslint-disable-next-line react/prop-types
