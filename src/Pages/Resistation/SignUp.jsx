@@ -4,6 +4,7 @@ import axios from "axios";
 import { useContext } from "react";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
 import { GoogleAuthProvider } from "firebase/auth";
+import useAxios from "../../Hooks/useAxios";
 
 const SignUp = () => {
   const imgbbKey = "741f857d3f007eab00beef241dce3448";
@@ -13,7 +14,7 @@ const SignUp = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-
+  const axiosPublic = useAxios();
 
 
   // Sign up using email and password
@@ -30,13 +31,24 @@ const SignUp = () => {
     const password = data.password;
     const image = res?.data?.data?.url;
     const phone = data.phone;
-    console.log(name, email, phone, password, image)
-
+    const address = data.address;
     return createUser(email, password)
     .then((userCredential) => {
       const user = userCredential.user;
       console.log(user)
       update(name, image);
+
+      const userData = {
+        name,
+        email,
+        image,
+        phone,
+        address,
+      }
+      axiosPublic.post('/user',userData )
+      .then(res=> console.log(res.data));
+
+
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -50,14 +62,21 @@ const SignUp = () => {
   const handleGoogle = () =>{
     return googleSignup()
     .then((result) => {
-      // This gives you a Google Access Token. You can use it to access the Google API.
-      const credential = GoogleAuthProvider.credentialFromResult(result);
-      const token = credential.accessToken;
       // The signed-in user info.
       const user = result.user;
-      // IdP data available using getAdditionalUserInfo(result)
-      // ...
-      console.log(token, user)
+
+      const userData = {
+        name : user.displayName,
+        email: user.email,
+        image: user.photoURL,
+        phone: user.phoneNumber,
+        address: null,
+      }
+      axiosPublic.post('/user',userData )
+      .then(res=> console.log(res.data));
+
+
+
     }).catch((error) => {
       // Handle Errors here.
       const errorCode = error.code;

@@ -4,7 +4,6 @@ import { useContext } from "react";
 import { AuthContext } from "../AuthProvider/AuthProvider";
 const Navbar = () => {
   const {user, loading} = useContext(AuthContext);
-  console.log(user, loading)
 
 
     const option = <>

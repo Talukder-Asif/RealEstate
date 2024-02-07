@@ -3,10 +3,11 @@ import Btn from "../../Component/Btn";
 import { useContext } from "react";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
 import { GoogleAuthProvider } from "firebase/auth";
+import useAxios from "../../Hooks/useAxios";
 
 const SignIn = () => {
 
-
+const axiosPublic = useAxios();
   const {login, googleSignup} = useContext(AuthContext);
 // initialize rect hook form
   const {register, handleSubmit, formState: { errors }} = useForm();
@@ -33,14 +34,18 @@ const SignIn = () => {
 const handleGoogle = () =>{
   return googleSignup()
   .then((result) => {
-    // This gives you a Google Access Token. You can use it to access the Google API.
-    const credential = GoogleAuthProvider.credentialFromResult(result);
-    const token = credential.accessToken;
-    // The signed-in user info.
     const user = result.user;
-    // IdP data available using getAdditionalUserInfo(result)
-    // ...
-    console.log(token, user)
+    
+    const userData = {
+      name : user.displayName,
+      email: user.email,
+      image: user.photoURL,
+      phone: user.phoneNumber,
+      address: null,
+    }
+    axiosPublic.post('/user',userData )
+    .then(res=> console.log(res.data));
+
   }).catch((error) => {
     // Handle Errors here.
     const errorCode = error.code;
@@ -59,7 +64,7 @@ const handleGoogle = () =>{
 
   return (
     <div className="bg-[#eaf7f4] min-h-[70vh] py-12">
-      <div className="max-w-[800px] mx-auto mt-[10%] p-6 bg-white -md sm:px-8 sm:py-10 lg:px-12 lg:py-16">
+      <div className="max-w-[800px] mx-auto my-[10%] p-6 bg-white -md sm:px-8 sm:py-10 lg:px-12 lg:py-16">
         <div className="flex flex-col sm:flex-row justify-between space-x-0 sm:space-x-12">
           <div className="w-full sm:w-1/2 mb-8 sm:mb-0">
             {/* Left side form */}
