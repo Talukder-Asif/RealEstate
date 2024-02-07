@@ -3,8 +3,9 @@ import Btn from "../../Component/Btn";
 import axios from "axios";
 import { useContext } from "react";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
-import { GoogleAuthProvider } from "firebase/auth";
 import useAxios from "../../Hooks/useAxios";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const SignUp = () => {
   const imgbbKey = "741f857d3f007eab00beef241dce3448";
@@ -15,17 +16,19 @@ const SignUp = () => {
     formState: { errors },
   } = useForm();
   const axiosPublic = useAxios();
-
+  const navigate = useNavigate();
 
   // Sign up using email and password
   const handelSignup = async (data) => {
-    const res = await axios.post(`https://api.imgbb.com/1/upload?expiration=600&key=${imgbbKey}`, {image: data.image[0]},{
-      headers:{
-        "Content-Type":'multipart/form-data'
+    const res = await axios.post(
+      `https://api.imgbb.com/1/upload?expiration=600&key=${imgbbKey}`,
+      { image: data.image[0] },
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       }
-    } )
-    console.log(res.data)
-
+    );
     const name = data.name;
     const email = data.email;
     const password = data.password;
@@ -33,70 +36,80 @@ const SignUp = () => {
     const phone = data.phone;
     const address = data.address;
     return createUser(email, password)
-    .then((userCredential) => {
-      const user = userCredential.user;
-      console.log(user)
-      update(name, image);
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log(user);
+        update(name, image);
 
-      const userData = {
-        name,
-        email,
-        image,
-        phone,
-        address,
-      }
-      axiosPublic.post('/user',userData )
-      .then(res=> console.log(res.data));
-
-
-    })
-    .catch((error) => {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      console.log(errorCode, errorMessage)
-      // ..
-    });
+        const userData = {
+          name,
+          email,
+          image,
+          phone,
+          address,
+        };
+        axiosPublic
+          .post("/user", userData)
+          .then((res) => console.log(res.data));
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Your account has been created",
+          showConfirmButton: false,
+          timer: 2000,
+        });
+        navigate("/");
+      })
+      .catch((error) => {
+        const errorMessage = error.message;
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: `${errorMessage}`,
+          showConfirmButton: false,
+          timer: 3000,
+        });
+        // ..
+      });
   };
 
   // Signup using google
-  const handleGoogle = () =>{
+  const handleGoogle = () => {
     return googleSignup()
-    .then((result) => {
-      // The signed-in user info.
-      const user = result.user;
+      .then((result) => {
+        // The signed-in user info.
+        const user = result.user;
 
-      const userData = {
-        name : user.displayName,
-        email: user.email,
-        image: user.photoURL,
-        phone: user.phoneNumber,
-        address: null,
-      }
-      axiosPublic.post('/user',userData )
-      .then(res=> console.log(res.data));
-
-
-
-    }).catch((error) => {
-      // Handle Errors here.
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.customData.email;
-      // The AuthCredential type that was used.
-      const credential = GoogleAuthProvider.credentialFromError(error);
-      // ...
-
-
-      console.log(errorCode, errorMessage, email, credential);
-    });
-  }
-
-
-
-
-
-
+        const userData = {
+          name: user.displayName,
+          email: user.email,
+          image: user.photoURL,
+          phone: user.phoneNumber,
+          address: null,
+        };
+        axiosPublic
+          .post("/user", userData)
+          .then((res) => console.log(res.data));
+        Swal.fire({
+          position: "center",
+          icon: "success",
+          title: "Your account has been created",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        navigate("/");
+      })
+      .catch((error) => {
+        const errorMessage = error.message;
+        Swal.fire({
+          position: "center",
+          icon: "error",
+          title: `${errorMessage}`,
+          showConfirmButton: false,
+          timer: 3000,
+        });
+      });
+  };
 
   return (
     <div className="bg-[#eaf7f4] min-h-[70vh] py-12">
@@ -132,7 +145,7 @@ const SignUp = () => {
                       placeholder="Your Email"
                       type="email"
                       {...register("email", {
-                        required: "Enter your email address"
+                        required: "Enter your email address",
                       })}
                     />
                     <p className="text-red-500">{errors.email?.message} </p>
@@ -170,14 +183,12 @@ const SignUp = () => {
                     <p className="text-red-500">{errors.address?.message} </p>
                   </div>
 
-
                   <input
-                      type="file"
-                      {...register("image")}
-                      className="file-input file:border-[#15c39a] file:bg-[#15c39a] border-[#15c39a] file:text-white w-full"
-                      required
-                    />
-
+                    type="file"
+                    {...register("image")}
+                    className="file-input file:border-[#15c39a] file:bg-[#15c39a] border-[#15c39a] file:text-white w-full"
+                    required
+                  />
 
                   <div>
                     <input
@@ -190,7 +201,16 @@ const SignUp = () => {
                       type="password"
                       {...register("password", {
                         // eslint-disable-next-line no-useless-escape
-                        required: "Enter a password", pattern: {value: /^(?=.*[A-Z])(?=.*[\W_]).+$/, message:"Must contain at least one capital letter and one special character."}, minLength:{value:6, message:"Must contain at least 6 digit"}
+                        required: "Enter a password",
+                        pattern: {
+                          value: /^(?=.*[A-Z])(?=.*[\W_]).+$/,
+                          message:
+                            "Must contain at least one capital letter and one special character.",
+                        },
+                        minLength: {
+                          value: 6,
+                          message: "Must contain at least 6 digit",
+                        },
                       })}
                     />
                     <p className="text-red-500">{errors.password?.message} </p>
@@ -203,7 +223,10 @@ const SignUp = () => {
             </form>
             <p className="text-sm my-4 flex justify-center">Or</p>
             <div className="grid grid-cols-2 gap-2">
-              <button onClick={handleGoogle} className="inline-flex items-center justify-center rounded-md text-sm font-bold  h-12 px-4 py-2 w-full mb-2 border-2 border-blue-600 hover:text-white hover:bg-blue-600 bg-white text-blue-600 ">
+              <button
+                onClick={handleGoogle}
+                className="inline-flex items-center justify-center rounded-md text-sm font-bold  h-12 px-4 py-2 w-full mb-2 border-2 border-blue-600 hover:text-white hover:bg-blue-600 bg-white text-blue-600 "
+              >
                 <svg
                   className="w-6 h-6 me-2"
                   aria-hidden="true"

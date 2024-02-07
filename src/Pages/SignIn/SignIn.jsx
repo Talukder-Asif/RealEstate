@@ -2,12 +2,14 @@ import { useForm } from "react-hook-form";
 import Btn from "../../Component/Btn";
 import { useContext } from "react";
 import { AuthContext } from "../../AuthProvider/AuthProvider";
-import { GoogleAuthProvider } from "firebase/auth";
 import useAxios from "../../Hooks/useAxios";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
 
 const SignIn = () => {
 
 const axiosPublic = useAxios();
+const navigate = useNavigate();
   const {login, googleSignup} = useContext(AuthContext);
 // initialize rect hook form
   const {register, handleSubmit, formState: { errors }} = useForm();
@@ -19,14 +21,25 @@ const axiosPublic = useAxios();
     .then((userCredential) => {
       // Signed up 
       const user = userCredential.user;
-      // ...
-      console.log(user)
+      console.log(user);
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: `Welcome ${user.displayName}`,
+        showConfirmButton: false,
+        timer: 2000
+      });
+      navigate('/')
     })
     .catch((error) => {
-      const errorCode = error.code;
       const errorMessage = error.message;
-      // ..
-      console.log(errorCode, errorMessage);
+      Swal.fire({
+        position: "center",
+        icon: "error",
+        title: `${errorMessage}`,
+        showConfirmButton: false,
+        timer: 3000,
+      });
     });
   }
 
@@ -45,19 +58,24 @@ const handleGoogle = () =>{
     }
     axiosPublic.post('/user',userData )
     .then(res=> console.log(res.data));
-
+    navigate('/')
+    Swal.fire({
+          position: "center",
+          icon: "success",
+          title: `Welcome ${user.displayName}`,
+          showConfirmButton: false,
+          timer: 1500,
+        });
   }).catch((error) => {
     // Handle Errors here.
-    const errorCode = error.code;
     const errorMessage = error.message;
-    // The email of the user's account used.
-    const email = error.customData.email;
-    // The AuthCredential type that was used.
-    const credential = GoogleAuthProvider.credentialFromError(error);
-    // ...
-
-
-    console.log(errorCode, errorMessage, email, credential);
+    Swal.fire({
+      position: "center",
+      icon: "error",
+      title: `${errorMessage}`,
+      showConfirmButton: false,
+      timer: 3000,
+    });
   }); 
 }
 
